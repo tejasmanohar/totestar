@@ -4,11 +4,10 @@ var request = require('superagent');
 var router = express.Router();
 
 function getData(username, callback) {
-  console.log(process.env.GH_USERNAME + process.env.GH_PASSWORD)
   request
-    .get('https://api.github.com/users/' + username)
-    .auth(process.env.GH_USERNAME, process.env.GH_PASSWORD)
+    .get('https://api.github.com/users/' + username + '?client_secret=' + process.env.CLIENT_SECRET)
     .end(function(error, res){
+      console.log(res.text)
       var reposCount = JSON.parse(res.text).public_repos;
       
       var pages = Math.ceil(res.public_repos / 100),
@@ -31,8 +30,7 @@ function getData(username, callback) {
  
 function getStarCount(page, username, callback) {
   request
-    .get('https://api.github.com/users/' + username + '/repos?per_page=100&page=' + page)
-    .auth(process.env.GH_USERNAME, process.env.GH_PASSWORD)
+    .get('https://api.github.com/users/' + username + '/repos?per_page=100&page=' + page + '&client_secret=' + process.env.CLIENT_SECRET)
     .end(function(err, res){
       if (err) { return callback(err); }
       var data = JSON.parse(res.text);
