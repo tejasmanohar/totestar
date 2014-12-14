@@ -13,7 +13,7 @@ function getData(username, callback) {
         starTotal = 0;
       
       (function next(page) {
-      getStarCount(curPage, function (err, stars) {
+      getStarCount(page, username, function (err, stars) {
         if (err) { return callback(err); }
         starTotal += stars;
         
@@ -27,7 +27,7 @@ function getData(username, callback) {
     });
 }
  
-function count(page, callback) {
+function getStarCount(page, username, callback) {
   request
     .get('https://api.github.com/users/' + username + '/repos?per_page=100&page=' + page)
     .end(function(err, res){
@@ -41,7 +41,7 @@ function count(page, callback) {
 }
  
 router.post('/', function(req, res, next) {
-  getData(username, function (err, count) {
+  getData(req.param('username'), function (err, count) {
     if (err) { return next(err); }
     res.send(count);
   });
